@@ -4,6 +4,7 @@ Spyder Editor
 
 This is a temporary script file.
 """
+
 class Node():
     """A node class for A* Pathfinding"""
 
@@ -17,7 +18,15 @@ class Node():
         self.f = 0
 
     def __eq__(self, other):
+        """finds if the nodes are equal"""
         return self.position == other.position
+    
+    def f(self):
+
+    	"""Method for getting f(node), which is the total cost (cost so far + estimated cost to goal)
+    	:return: g(node) + h(node)"""
+    	return self.g + self.h
+
 
 
 def astar(maze, start, end):
@@ -120,10 +129,12 @@ def main():
             [0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
+   
     start = (0, 0)
     end = (8, 6)
 
     path = astar(maze, start, end)
-    print(path)
+    #print(path)
 
-main()
+
+#main()

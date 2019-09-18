@@ -3,6 +3,7 @@ np.set_printoptions(threshold=np.inf, linewidth=300)
 import pandas as pd
 import time
 from PIL import Image
+import csv
 
 from temp import astar #importerer A*
 
@@ -231,8 +232,5 @@ class Map_Obj():
         # Show image
         image.show()
         
-def main():
-    __init__(self, task=1)
-    fill_critical_positions(self, task)
     
 
