@@ -7,6 +7,7 @@ This is a temporary script file.
 class Node():
     """A node class for A* Pathfinding"""
 
+    #initialiserer noden
     def __init__(self, parent=None, position=None):
         self.parent = parent
         self.position = position
@@ -29,7 +30,10 @@ def astar(maze, start, end):
     end_node.g = end_node.h = end_node.f = 0
 
     # Initialize both open and closed list
+    
+    #Genererte noder som ikke er besøkt
     open_list = []
+    #besøkte noder 
     closed_list = []
 
     # Add the start node
@@ -41,6 +45,7 @@ def astar(maze, start, end):
         # Get the current node
         current_node = open_list[0]
         current_index = 0
+        #finner ut om det finnes en node med lavere verdi for f
         for index, item in enumerate(open_list):
             if item.f < current_node.f:
                 current_node = item
@@ -116,11 +121,9 @@ def main():
             [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]
 
     start = (0, 0)
-    end = (7, 6)
+    end = (8, 6)
 
     path = astar(maze, start, end)
     print(path)
 
-
-if __name__ == '__main__':
-    main()
+main()
