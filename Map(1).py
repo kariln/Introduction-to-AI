@@ -4,6 +4,8 @@ import pandas as pd
 import time
 from PIL import Image
 
+from temp import astar #importerer A*
+
 class Map_Obj():
     def __init__(self, task=1):
         self.start_pos, self.goal_pos, self.end_goal_pos, self.path_to_map = self.fill_critical_positions(task)
@@ -228,4 +230,9 @@ class Map_Obj():
                         pixels[x * scale + i, y * scale + j] = colors[map[y][x]]
         # Show image
         image.show()
+        
+def main():
+    __init__(self, task=1)
+    fill_critical_positions(self, task)
+    
 
