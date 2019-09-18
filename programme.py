@@ -9,7 +9,6 @@ import temp
 
 
 map_obj = map.Map_Obj(task=1)
-
 map_string = map_obj.get_maps()[1]
 map_int = map_obj.get_maps()[0]
 
@@ -26,7 +25,7 @@ def main():
     
     map_int =[list(x) for x in map_int]
     
-    print(map_string)
+    print(len(map_int[0]))
     
     path1 = temp.astar(map_int, start_pos, goal_pos)
     print(path1)

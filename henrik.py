@@ -50,7 +50,7 @@ class SearchNode:
 
 # The agenda loop for A* is written from the pseudocode described in the Supplement - Essentials of the A* Algorithm
 
-def a_star():
+def a_star(map_obj,):
 	"""
 	Method that runs the agenda loop for the A* algorithm
 	:return: Boolean whether or not a path was found from A to B

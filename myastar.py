@@ -49,7 +49,7 @@ class SearchNode():
 	def get_solution(self):
 		return self.solution
 
-def a_star():
+def a_star(map_obj, start, end):
     """returns a boolean on whether or not a path was found between node A and B"""
     
     #visited nodes
@@ -71,21 +71,55 @@ def a_star():
         #check if this is the goal node
         if current_node.get_solution():
             return True
+    return path
         
 def generate_children(current_node):
-    """generates the children of the node, and adds them to the children list of the node"""   
-    
-	for node in all_nodes:
-		if node.cost < float('inf'):
-        # Checks if node is not a wall. The comparison will always be true as long as the number is not infinity or not a number
-			if (current_node.x == node.x) and (current_node.y == node.y - 1 or current_node.y == node.y + 1):
-				current_node.children.append(node)
-			elif (current_node.y == node.y) and (current_node.x == node.x - 1 or current_node.x == node.x + 1):
-				current_node.children.append(node)     
-    
+    """generates the children of the node, and adds them to the children list of the node""" 
+    for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]: 
+    # Adjacent nodes
+
+            # Get node position
+            node_position = (current_node.x + new_position[0], current_node.y + new_position[1])
+
+            # Make sure within range
+            if node_position[0] > (map_shape(map_string)[1]) - 1) or node_position[0] < 0 or node_position[1] > (map_shape(map_string)[0] - 1) or node_position[1] < 0:
+                continue
+                #map_shape(map_string)[1] returns the number of columns, x
+                #map_shape(map_string)[0] returns the number of columns, y
+                
+                #want to send out a outofbounds fail
+
+            # Make sure walkable terrain
+            if map_string[node_position[0]][node_position[1]] != 0:
+                continue
+
+            # Create new node
+            new_node = Node(node_position[0],node_position[1])
+            new_node.parent = current_node
+            
+
+            # Append
+            children.append(new_node)
+            
+            #iterate through all the children
+
+def generate_map(task):
+    map_obj = map.Map_Obj(task=1)
+    #in string format
+    return map_obj.get_maps()[1]
+
+def map_shape(map_string):
+    """shape will return a tuple (m, n), where m is the number of rows, and n is the number 
+    of columns."""
+    return map_string.shape
 
 def main():
-    node1 = SearchNode(0,0)
-    print(node1.get_solution())
+    map_obj = map.Map_Obj(task=1)
+    map_string = generate_map(1)
+    print(type(map_string))
+    start = map_obj.get_start_pos()
+    end = map_obj.get_goal_pos()
+    #path = a_star(map_string, start, end)
+    #print(path)
 
 main()
