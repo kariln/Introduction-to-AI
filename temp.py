@@ -47,6 +47,7 @@ def astar(maze, start, end):
 
     # Add the start node
     open_list.append(start_node)
+    print(len(open_list))
 
     # Loop until you find the end
     while len(open_list) > 0:
@@ -62,6 +63,7 @@ def astar(maze, start, end):
 
         # Pop current off open list, add to closed list
         open_list.pop(current_index)
+        print(len(open_list))
         closed_list.append(current_node)
 
         # Found the goal

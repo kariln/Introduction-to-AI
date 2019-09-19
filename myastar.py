@@ -30,8 +30,8 @@ class SearchNode():
 		self.parent = None
 
 		self.f = 0
-		self.g = 0  # g(s)
-		self.h = 0  # h(s)
+		self.g = float('inf')  # g(s), getting from the root to the node s
+		self.h = None  # h(s), an estimated cost of mov
         
 
 	def f(self):

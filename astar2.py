@@ -4,7 +4,13 @@ Created on Wed Sep 18 18:19:59 2019
 
 @author: Kari Ness
 """
+#change to int representation
+#check order of coordinates
+#check the updates of the cost
+#må hente inn nodene fra nodes
+
 import map
+import math as m
 
 
 class Node():
@@ -14,10 +20,14 @@ class Node():
     def __init__(self, parent=None, position=None):
         self.parent = parent
         self.position = position
+        self.children = []
 
-        self.g = 0
-        self.h = 0
-        self.f = 0
+        self.g = float('inf') #the cost of getting from the root to node s
+        self.h = None #the estimated distance from s to a goal state
+        
+        
+        self.cost = 0 
+        
 
     def __eq__(self, other):
         """finds if the nodes are equal"""
@@ -25,7 +35,7 @@ class Node():
     
     def __str__(self):
         """prints information about the node"""
-        return "x: " + str(self.position[0]) + ", y: " + str(self.position[1]) + ", f: " + str(self.f)
+        return "x: " + str(self.position[0]) + ", y: " + str(self.position[1]) + ", cost: " + str(self.cost)
     
     def f(self):
 
@@ -33,61 +43,45 @@ class Node():
     	:return: g(node) + h(node)"""
     	return self.g + self.h
     
-def a_star(map_obj, start, end):
+def a_star(map_string, start, end):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
 
     # Create start and end node
-    start_node = Node(None,tuple(start))
-    start_node.g = start_node.h = start_node.f = 0
     end_node = Node(None,tuple(end))
-    end_node.g = end_node.h = end_node.f = 0
+    end_node.__str__()
+    end_node.h = 0
+    start_node = Node(None,tuple(start))
+    start_node.g = 0
+    start_node.h = euclidian_distance(start_node, end_node)
     
-    #creates the map
-    map_string = generate_map(1)
-
     # Initialize both open and closed list
-    
-    #Genererte noder som ikke er besøkt
+    #visited nodes
     open_list = []
-    #besøkte noder 
+    #generated nodes, not visited
     closed_list = []
 
     # Add the start node
     open_list.append(start_node)
     
     # Loop until you find the end
-    while len(open_list) > 0:
-        print(1)
-        # Get the current node
-        current_node = open_list[0]
-        current_index = 0
+    #while len(open_list) > 0:
+    while True:
         
-        #finds out if there exists a node in open_list with a lower f-value
-        #if there exist such a node, this node will be put in front in the open_list
-        for index, item in enumerate(open_list):
-            if item.f < current_node.f:
-                current_node = item
-                current_index = index
-
-        # Pop current node off open list, add to closed list
-      # print(open_list[0].__str__())
-        open_list.pop(current_index)
+        #failure occurs if there are no more nodes in the open_list
+        if not open_list:
+            return False  
+        
+        # Get the current node
+        current_node = open_list.pop()
+        print(current_node)
         closed_list.append(current_node)
-        print(closed_list[0].__str__())
-        print(len(open_list))
-        print(len(closed_list))
 
         # Found the goal
         if current_node == end_node:
-            print("inside the loop where we've found the end_node")
-            path = []
-            current = current_node
-            while current is not None:
-                path.append(current.position)
-                current = current.parent
-            return path[::-1] # Return reversed path
+            return True
 
-        children = []
+
+        
         for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]: # Adjacent squares
 
             # Get node position
@@ -99,35 +93,39 @@ def a_star(map_obj, start, end):
                 #map_shape(map_string)[0] returns the number of columns, y
 
             # Make sure walkable terrain
-            if map_string[node_position[0]][node_position[1]] != 0:
+            if map_string[node_position[1]][node_position[0]] == -1:
                 continue
 
             # Create new node
             new_node = Node(current_node, node_position)
 
             # Append
-            children.append(new_node)
+            current_node.children.append(new_node)
 
         # Loop through children
-        for child in children:
+        for child in current_node.children:
+            
+            if child not in open_list and child not in closed_list:
+                #the child is not in the closed list, and has and if it is in the open_list,
+                #it has a lower g-value
+                #updates information about the relationship between parent and child
+                attach_and_eval(child, current_node, end_node)
+                #adds the child to the open list
+                open_list.append(child)
+                #sorts the open_list so that the node with the lowest estimated cost is in pos=0
+                open_list.sort(key=lambda x: x.f())  
 
-            # Child is on the closed list
-            for closed_child in closed_list:
-                if child == closed_child:
-                    continue
+            elif current_node.g + child.cost < child.g:  #true if there exists a cheaper path to s
+                attach_and_eval(child, current_node, end_node)
+                if child in closed_list:
+                    propagate_path_improvements(child)
 
-            # Create the f, g, and h values
-            child.g = current_node.g + 1
-            child.h = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
-            child.f = child.g + child.h
-
-            # Child is already in the open list
-            for open_node in open_list:
-                if child == open_node and child.g > open_node.g:
-                    continue
-
-            # Add the child to the open list
-            open_list.append(child)
+def attach_and_eval(child, parent, end_node):
+    """updates information in relationship between child and parent"""
+    child.parent = parent
+     # Create the g and h values
+    child.g = parent.g + child.cost
+    child.h = euclidian_distance(child, end_node)       
             
 def generate_map(task):
     map_obj = map.Map_Obj(task=1)
@@ -139,13 +137,123 @@ def map_shape(map_string):
     of columns."""
     return map_string.shape
 
+##initializing the nodes
+#def create_nodes(map_string):
+#    
+#    #finds the number of rows and columns in my map of nodes
+#    rows = map_shape(map_string)[0]
+#    columns = map_shape(map_string)[1]
+#    
+#    #initializing the nodes list
+#    nodes = []
+#    start_node = []
+#    end_node = []
+#
+#    for x_cord in range(columns):
+#        for y_cord in range(rows):
+#            node_position = [y_cord, x_cord]
+#            node = map_string[y_cord][x_cord]
+#            node.strip()
+#            map_string[y_cord][x_cord] = node #strip takes away redundant space
+#            
+#            if node == '#': #found wall-node
+#                wall_node = Node(node_position)
+#                wall_node.cost = float('inf')
+#                nodes.append(wall_node)
+#                
+#            elif node == 'A':  # Found start-node
+#                start_node = Node(node_position)
+#                nodes.append(start_node)
+#            
+#            elif node == 'B':  # Found goal-node
+#                goal_node = Node(node_position)
+#                nodes.append(goal_node)
+#                
+#            else: #found regular node
+#                search_node = Node(node_position)
+#                search_node.cost = 1
+#    return map_string, nodes, end_node, start_node
+
+#initializing the nodes
+def create_nodes(map_int):
+    
+    #finds the number of rows and columns in my map of nodes
+    rows = map_shape(map_int)[0]
+    columns = map_shape(map_int)[1]
+    
+    #initializing the nodes list
+    nodes = []
+    start_node = []
+    end_node = []
+
+    for x_cord in range(columns):
+        for y_cord in range(rows):
+            node_position = [y_cord, x_cord]
+            node = map_int[y_cord][x_cord]
+            node.strip()
+            map_int[y_cord][x_cord] = node #strip takes away redundant space
+            
+            
+            if node == -1: #found wall-node
+                wall_node = Node(node_position)
+                wall_node.cost = float('inf')
+                nodes.append(wall_node)
+                
+            else: #found regular node
+                search_node = Node(node_position)
+                search_node.cost = 1
+    return map_int, nodes, end_node, start_node
+
+def propagate_path_improvements(parent):
+    for child in parent.children:
+        if parent.g + child.cost < child.g:
+            child.parent = parent
+            child.g = parent.g + child.cost
+            propagate_path_improvements(child)
+
+    
+def euclidian_distance(node, end):
+	"""
+	:param node: Node in board
+	:return: Euclid distance from node to goal
+	"""
+	return m.sqrt(m.pow(end.position[0] - node.position[0], 2) + m.pow(end.position[1] - node.position[1], 2))
+
+def manhattan_distance(node, end):
+	"""
+	:param node: Node in board
+	:return: Manhattan distance from node to goal
+	"""
+	return abs(end.position[0] - node.position[0]) + abs(end.position[1] - node.position[1])
+
+def get_path(end_node):
+    path = []
+    current = end_node
+    #creates path by saving the parents until one reach the start node
+    while current is not None:
+        path.append(current.position)
+        current = current.parent
+        return path[::-1] # Return reversed path
+
 def main():
+    
+    #creates the map
     map_obj = map.Map_Obj(task=1)
     map_string = generate_map(1)
+    map_int = map_obj.get_maps()[0]
+    
+    #updates map_string to not contain any space and updates the cost of the nodes
+    #nodes-list has all the nodes in the  map
+    map_string, nodes, end_node, start_node = create_nodes(map_string)
     start = map_obj.get_start_pos()
     end = map_obj.get_goal_pos()
-    path = a_star(map_string, start, end)
-    #print(path)
+    
+    #script
+    if a_star(map_string,start,end):
+        path = get_path(end_node)
+        print(path)        
+    else:
+        print("There's no path between the given nodes")
     
 main()
     
