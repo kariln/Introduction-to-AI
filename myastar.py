@@ -29,12 +29,10 @@ class SearchNode():
 		self.children = []
 		self.parent = None
 
-		self.cost = 0
-		self.g = float('inf')  # g(s)
-		self.h = None  # h(s)
-        #the float('inf') is an unbound upper value. this means that the value can only be positive
-        #the reason why this is important is because walls in the map are negative numbers, and we 
-        #can't add negative numbers to our path
+		self.f = 0
+		self.g = 0  # g(s)
+		self.h = 0  # h(s)
+        
 
 	def f(self):
 		"""
@@ -52,6 +50,9 @@ class SearchNode():
 def a_star(map_obj, start, end):
     """returns a boolean on whether or not a path was found between node A and B"""
     
+    #creates map
+    map_string = generate_map(1)
+    
     #visited nodes
     closed_nodes = []
     #generated nodes, not visited
@@ -64,44 +65,84 @@ def a_star(map_obj, start, end):
         if open_nodes == []:
             return False
         
-        #moves the node with the least cost drom the open_nodes list to the closed nodes list
-        current_node = open.nodes.pop(0)
+        #moves the node with the least cost from the open_nodes list to the closed nodes list
+        current_node = open_nodes.pop(0)
         closed_nodes.append(current_node)
         
         #check if this is the goal node
         if current_node.get_solution():
             return True
-    return path
+
+        #generates the children of the node, and adds them to the children list of the node
+        children = []
+        for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]: 
+        # Adjacent nodes
         
-def generate_children(current_node):
-    """generates the children of the node, and adds them to the children list of the node""" 
-    for new_position in [(0, -1), (0, 1), (-1, 0), (1, 0), (-1, -1), (-1, 1), (1, -1), (1, 1)]: 
-    # Adjacent nodes
-
-            # Get node position
-            node_position = (current_node.x + new_position[0], current_node.y + new_position[1])
-
-            # Make sure within range
-            if node_position[0] > (map_shape(map_string)[1]) - 1) or node_position[0] < 0 or node_position[1] > (map_shape(map_string)[0] - 1) or node_position[1] < 0:
-                continue
-                #map_shape(map_string)[1] returns the number of columns, x
-                #map_shape(map_string)[0] returns the number of columns, y
+                # Get node position
+                node_position = (current_node.x + new_position[0], current_node.y + new_position[1])
+        
+                # Make sure within range
+                if node_position[0] > (map_shape(map_string)[1] - 1) or node_position[0] < 0 or node_position[1] > (map_shape(map_string)[0] - 1) or node_position[1] < 0:
+                    continue
+                    #map_shape(map_string)[1] returns the number of columns, x
+                    #map_shape(map_string)[0] returns the number of columns, y
+                    
+                    #want to send out a outofbounds fail
+        
+                # Make sure walkable terrain
+                if map_string[node_position[0]][node_position[1]] != 0:
+                    continue
+        
+                # Create new node
+                new_node = SearchNode(node_position[0],node_position[1])
+                new_node.parent = current_node
                 
-                #want to send out a outofbounds fail
-
-            # Make sure walkable terrain
-            if map_string[node_position[0]][node_position[1]] != 0:
-                continue
-
-            # Create new node
-            new_node = Node(node_position[0],node_position[1])
-            new_node.parent = current_node
-            
-
-            # Append
-            children.append(new_node)
-            
-            #iterate through all the children
+        
+                # Append
+                children.append(new_node)
+                
+                #iterate through all the children
+                for child in children:
+        
+                     # Child is on the closed list
+                     #have we already added the node to pur path?
+                    for closed_child in closed_list:
+                        if child == closed_child:
+                            continue
+        
+                    # Create the f, g, and h values
+                    child.g = current_node.g + 1
+                    child.h = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
+                    child.f = child.g + child.h
+        
+                    # Child is already in the open list
+                    for open_node in open_list:
+                        if child == open_node and child.g > open_node.g:
+                            continue
+        
+                    # Add the child to the open list
+                    open_list.append(child)
+        
+                    for child in children:
+                    
+                        # Child is on the closed list
+                        #have we already added the node to pur path?
+                        for closed_child in closed_list:
+                             if child == closed_child:
+                                 continue
+                    
+                        # Create the f, g, and h values
+                        child.g = current_node.g + 1
+                        child.h = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
+                        child.f = child.g + child.h
+                        
+                        # Child is already in the open list
+                        for open_node in open_list:
+                            if child == open_node and child.g > open_node.g:
+                                continue
+                        
+                        # Add the child to the open list
+                        open_list.append(child)
 
 def generate_map(task):
     map_obj = map.Map_Obj(task=1)
@@ -116,6 +157,7 @@ def map_shape(map_string):
 def main():
     map_obj = map.Map_Obj(task=1)
     map_string = generate_map(1)
+    print(map_shape(map_string))
     print(type(map_string))
     start = map_obj.get_start_pos()
     end = map_obj.get_goal_pos()

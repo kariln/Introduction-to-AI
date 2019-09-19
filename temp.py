@@ -131,10 +131,11 @@ def main():
 
    
     start = (0, 0)
+    print(type(start))
     end = (8, 6)
 
-    path = astar(maze, start, end)
+    #path = astar(maze, start, end)
     #print(path)
 
 
-#main()
+main()
