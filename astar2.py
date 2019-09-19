@@ -37,9 +37,9 @@ def a_star(map_obj, start, end):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
 
     # Create start and end node
-    start_node = Node(None, start)
+    start_node = Node(None,tuple(start))
     start_node.g = start_node.h = start_node.f = 0
-    end_node = Node(None, end)
+    end_node = Node(None,tuple(end))
     end_node.g = end_node.h = end_node.f = 0
     
     #creates the map
@@ -57,7 +57,7 @@ def a_star(map_obj, start, end):
     
     # Loop until you find the end
     while len(open_list) > 0:
-
+        print(1)
         # Get the current node
         current_node = open_list[0]
         current_index = 0
@@ -70,7 +70,7 @@ def a_star(map_obj, start, end):
                 current_index = index
 
         # Pop current node off open list, add to closed list
-        print(open_list[0].__str__())
+      # print(open_list[0].__str__())
         open_list.pop(current_index)
         closed_list.append(current_node)
         print(closed_list[0].__str__())
@@ -143,7 +143,6 @@ def main():
     map_obj = map.Map_Obj(task=1)
     map_string = generate_map(1)
     start = map_obj.get_start_pos()
-    print(type(start[0])
     end = map_obj.get_goal_pos()
     path = a_star(map_string, start, end)
     #print(path)
