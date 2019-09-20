@@ -34,7 +34,7 @@ class Node():
         return self.position == other.position
     
     def __str__(self):
-        return "x: " + str(self.position) + ", y: " + str(self.position) + ", cost: " + str(self.cost)
+        return "x: " + str(self.position[0]) + ", y: " + str(self.position[1]) + ", cost: " + str(self.cost)
     
     def f(self):
 
@@ -45,10 +45,10 @@ class Node():
 def a_star(map_string, start, end, nodes):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
     # Create start and end node
-    print(nodes)
-    print(type(nodes))
+    index = 0
     for node in nodes:
-        print(node)
+        index+=1
+    print(index)
     end_node = Node(None,tuple(end))
     print(end_node)
     start_node = Node(None,tuple(start))
@@ -165,20 +165,20 @@ def create_nodes(map_string):
             map_string[y_cord][x_cord] = node #strip takes away redundant space
             print(node_position)
             if node == '#': #found wall-node
-                wall_node = Node(node_position)
+                wall_node = Node(tuple(node_position))
                 wall_node.cost = float('inf')
                 nodes.append(wall_node)
                 
             elif node == 'A':  # Found start-node
-                start_node = Node(node_position)
+                start_node = Node(tuple(node_position))
                 nodes.append(start_node)
             
             elif node == 'B':  # Found goal-node
-                goal_node = Node(node_position)
+                goal_node = Node(tuple(node_position))
                 nodes.append(goal_node)
                 
             else: #found regular node
-                search_node = Node(node_position)
+                search_node = Node(tuple(node_position))
                 search_node.cost = 1
                 nodes.append(search_node)
     return map_string, nodes, end_node, start_node
@@ -254,7 +254,6 @@ def main():
     #updates map_string to not contain any space and updates the cost of the nodes
     #nodes-list has all the nodes in the  map
     map_string, nodes, end_node, start_node = create_nodes(map_string)
-    print(nodes[1])
     start = map_obj.get_start_pos()
     end = map_obj.get_goal_pos()
     
