@@ -34,8 +34,7 @@ class Node():
         return self.position == other.position
     
     def __str__(self):
-        """prints information about the node"""
-        return "x: " + str(self.position[0]) + ", y: " + str(self.position[1]) + ", cost: " + str(self.cost)
+        return "x: " + str(self.position) + ", y: " + str(self.position) + ", cost: " + str(self.cost)
     
     def f(self):
 
@@ -43,17 +42,19 @@ class Node():
     	:return: g(node) + h(node)"""
     	return self.g + self.h
     
-def a_star(map_string, start, end):
+def a_star(map_string, start, end, nodes):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
-
     # Create start and end node
+    print(nodes)
+    print(type(nodes))
+    for node in nodes:
+        print(node)
     end_node = Node(None,tuple(end))
-    end_node.__str__()
-    end_node.h = 0
+    print(end_node)
     start_node = Node(None,tuple(start))
+    end_node.h = 0
     start_node.g = 0
     start_node.h = euclidian_distance(start_node, end_node)
-    
     # Initialize both open and closed list
     #visited nodes
     open_list = []
@@ -73,7 +74,7 @@ def a_star(map_string, start, end):
         
         # Get the current node
         current_node = open_list.pop()
-        print(current_node)
+        #print(current_node)
         closed_list.append(current_node)
 
         # Found the goal
@@ -96,9 +97,16 @@ def a_star(map_string, start, end):
             if map_string[node_position[1]][node_position[0]] == -1:
                 continue
 
-            # Create new node
-            new_node = Node(current_node, node_position)
+#            # Create new node
+#            for node in nodes:
+#                print(101)
+#                if node_position == node.position:
+#                    new_node = node
+#            if new_node == None:
+                new_node = Node(current_node, node_position)
 
+            new_node = Node(current_node, node_position)
+            
             # Append
             current_node.children.append(new_node)
 
@@ -137,49 +145,12 @@ def map_shape(map_string):
     of columns."""
     return map_string.shape
 
-##initializing the nodes
-#def create_nodes(map_string):
-#    
-#    #finds the number of rows and columns in my map of nodes
-#    rows = map_shape(map_string)[0]
-#    columns = map_shape(map_string)[1]
-#    
-#    #initializing the nodes list
-#    nodes = []
-#    start_node = []
-#    end_node = []
-#
-#    for x_cord in range(columns):
-#        for y_cord in range(rows):
-#            node_position = [y_cord, x_cord]
-#            node = map_string[y_cord][x_cord]
-#            node.strip()
-#            map_string[y_cord][x_cord] = node #strip takes away redundant space
-#            
-#            if node == '#': #found wall-node
-#                wall_node = Node(node_position)
-#                wall_node.cost = float('inf')
-#                nodes.append(wall_node)
-#                
-#            elif node == 'A':  # Found start-node
-#                start_node = Node(node_position)
-#                nodes.append(start_node)
-#            
-#            elif node == 'B':  # Found goal-node
-#                goal_node = Node(node_position)
-#                nodes.append(goal_node)
-#                
-#            else: #found regular node
-#                search_node = Node(node_position)
-#                search_node.cost = 1
-#    return map_string, nodes, end_node, start_node
-
 #initializing the nodes
-def create_nodes(map_int):
+def create_nodes(map_string):
     
     #finds the number of rows and columns in my map of nodes
-    rows = map_shape(map_int)[0]
-    columns = map_shape(map_int)[1]
+    rows = map_shape(map_string)[0]
+    columns = map_shape(map_string)[1]
     
     #initializing the nodes list
     nodes = []
@@ -189,20 +160,58 @@ def create_nodes(map_int):
     for x_cord in range(columns):
         for y_cord in range(rows):
             node_position = [y_cord, x_cord]
-            node = map_int[y_cord][x_cord]
+            node = map_string[y_cord][x_cord]
             node.strip()
-            map_int[y_cord][x_cord] = node #strip takes away redundant space
-            
-            
-            if node == -1: #found wall-node
+            map_string[y_cord][x_cord] = node #strip takes away redundant space
+            print(node_position)
+            if node == '#': #found wall-node
                 wall_node = Node(node_position)
                 wall_node.cost = float('inf')
                 nodes.append(wall_node)
                 
+            elif node == 'A':  # Found start-node
+                start_node = Node(node_position)
+                nodes.append(start_node)
+            
+            elif node == 'B':  # Found goal-node
+                goal_node = Node(node_position)
+                nodes.append(goal_node)
+                
             else: #found regular node
                 search_node = Node(node_position)
                 search_node.cost = 1
-    return map_int, nodes, end_node, start_node
+                nodes.append(search_node)
+    return map_string, nodes, end_node, start_node
+
+##initializing the nodes
+#def create_nodes(map_int):
+#    
+#    #finds the number of rows and columns in my map of nodes
+#    rows = map_shape(map_int)[0]
+#    columns = map_shape(map_int)[1]
+#    
+#    #initializing the nodes list
+#    nodes = []
+#    start_node = []
+#    end_node = []
+#
+#    for x_cord in range(columns):
+#        for y_cord in range(rows):
+#            node_position = [y_cord, x_cord]
+#            node = map_int[y_cord][x_cord]
+#            node.strip()
+#            map_int[y_cord][x_cord] = node #strip takes away redundant space
+#            
+#            
+#            if node == -1: #found wall-node
+#                wall_node = Node(node_position)
+#                wall_node.cost = float('inf')
+#                nodes.append(wall_node)
+#                
+#            else: #found regular node
+#                search_node = Node(node_position)
+#                search_node.cost = 1
+#    return map_int, nodes, end_node, start_node
 
 def propagate_path_improvements(parent):
     for child in parent.children:
@@ -240,20 +249,22 @@ def main():
     #creates the map
     map_obj = map.Map_Obj(task=1)
     map_string = generate_map(1)
-    map_int = map_obj.get_maps()[0]
+    #map_int = map_obj.get_maps()[0]
     
     #updates map_string to not contain any space and updates the cost of the nodes
     #nodes-list has all the nodes in the  map
     map_string, nodes, end_node, start_node = create_nodes(map_string)
+    print(nodes[1])
     start = map_obj.get_start_pos()
     end = map_obj.get_goal_pos()
     
     #script
-    if a_star(map_string,start,end):
+    if a_star(map_string, start, end, nodes):
         path = get_path(end_node)
         print(path)        
     else:
         print("There's no path between the given nodes")
+        
     
 main()
     
