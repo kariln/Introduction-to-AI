@@ -79,7 +79,6 @@ def a_star(map_int, start, end, nodes):
     # Loop until you find the end
     #while len(open_list) > 0:
     while True:
-        print(len(closed_list))
         #failure occurs if there are no more nodes in the open_list
         if not open_list:
             return False, None  
@@ -180,6 +179,24 @@ def create_nodes(map_obj):
                 wall_node.position = tuple(node_position)
                 wall_node.cost = float('inf')
                 nodes.append(wall_node)
+                
+            elif node == 2:
+                stair_node = Node(node_position)
+                stair_node.position = tuple(node_position)
+                wall_node.cost = 2
+                nodes.append(stair_node)
+                
+            elif node == 3:
+                packed_stair_node = Node(node_position)
+                packed_stair_node.position = tuple(node_position)
+                packed_stair_node.cost = 3
+                nodes.append(packed_stair_node)
+                
+            elif node == 4:
+                packed_room_node = Node(node_position)
+                packed_room_node.position = tuple(node_position)
+                packed_room_node.cost = 4
+                nodes.append(packed_room_node)
                 
             else: #found regular node
                 search_node = Node(node_position)
@@ -285,63 +302,92 @@ def show_map1(map_string):
     image.show()
 
 def main():
-    
-    #initialization - task 1 -part 1
-    map_obj = map.Map_Obj(task=1)
-    map_int = map_obj.get_maps()[0]
-
+#    
+#    #initialization - task 1 -part 1
+#    map_obj = map.Map_Obj(task=1)
+#    map_int = map_obj.get_maps()[0]
+#
+#    
+#    #updates map_string to not contain any space and updates the cost of the nodes
+#    #nodes-list has all the nodes in the  map
+#    nodes, start_node, end_node = create_nodes(map_obj)
+#    start = map_obj.get_start_pos()
+#    end = map_obj.get_goal_pos()
+#   
+#    #script task 1 - part 1
+#    if a_star(map_int, start, end, nodes)[0] == True:
+#        print("Path found")
+#        print("Start-node:", start)
+#        print("End-node:", end)
+#        
+#        goal = a_star(map_int, start, end, nodes)[1]
+#        path = get_path(goal)
+##        for item in path:
+#            #print(item)
+#
+#    else:
+#        print("There's no path between the given nodes")
+#    
+#    map_1 = map.Map_Obj(task=1)
+#    map_string = update_map_path(map_1,path)
+#    show_map1(map_string)
+#
+#    #initialization - task 2 - part 1
+#    map_obj2 = map.Map_Obj(task=2)
+#    map_int2 = map_obj.get_maps()[0]
+#
+#    #updates map_string to not contain any space and updates the cost of the nodes
+#    #nodes-list has all the nodes in the  map
+#    nodes2, start_node2, end_node2 = create_nodes(map_obj)
+#    start2 = map_obj2.get_start_pos()
+#    end2 = map_obj2.get_goal_pos()
+#    
+#    #script task 2 - part 1
+#    if a_star(map_int2, start2, end2, nodes2)[0] == True:
+#        print("Path2 found")
+#        print("Start-node:", start2)
+#        print("End-node:", end2)
+#        
+#        goal2 = a_star(map_int2, start2, end2, nodes2)[1]
+#        path2 = get_path(goal2)
+##        for item in path:
+#            #print(item)
+#
+#    else:
+#        print("There's no path between the given nodes")
+#    
+#    map_2 = map.Map_Obj(task=2)
+#    map_string2 = update_map_path(map_2,path2)
+#    show_map1(map_string2)
+#    
+    #initialization - task 2 - part 2
+    map_obj3 = map.Map_Obj(task=3)
+    map_int3 = map_obj3.get_maps()[0]
     
     #updates map_string to not contain any space and updates the cost of the nodes
     #nodes-list has all the nodes in the  map
-    nodes, start_node, end_node = create_nodes(map_obj)
-    start = map_obj.get_start_pos()
-    end = map_obj.get_goal_pos()
-   
+    nodes3, start_node3, end_node3 = create_nodes(map_obj)
+    start3 = map_obj3.get_start_pos()
+    end3 = map_obj3.get_goal_pos()
+    
     #script task 1 - part 1
-    if a_star(map_int, start, end, nodes)[0] == True:
+    if a_star(map_int3, start3, end3, nodes3)[0] == True:
         print("Path found")
-        print("Start-node:", start)
-        print("End-node:", end)
+        print("Start-node:", start3)
+        print("End-node:", end3)
         
-        goal = a_star(map_int, start, end, nodes)[1]
-        path = get_path(goal)
+        goal3 = a_star(map_int3, start3, end3, nodes3)[1]
+        path3 = get_path(goal3)
 #        for item in path:
             #print(item)
 
     else:
         print("There's no path between the given nodes")
     
-    map_1 = map.Map_Obj(task=1)
-    map_string = update_map_path(map_1,path)
-    show_map1(map_string)
-
-    #initialization - task 2 - part 1
-    map_obj2 = map.Map_Obj(task=2)
-    map_int2 = map_obj.get_maps()[0]
-
-    #updates map_string to not contain any space and updates the cost of the nodes
-    #nodes-list has all the nodes in the  map
-    nodes2, start_node2, end_node2 = create_nodes(map_obj)
-    start2 = map_obj2.get_start_pos()
-    end2 = map_obj2.get_goal_pos()
+    map_3 = map.Map_Obj(task=3)
+    map_string3 = update_map_path(map_3,path3)
+    show_map1(map_string3)
     
-    #script task 2 - part 1
-    if a_star(map_int2, start2, end2, nodes2)[0] == True:
-        print("Path found")
-        print("Start-node:", start)
-        print("End-node:", end)
-        
-        goal2 = a_star(map_int2, start2, end2, nodes2)[1]
-        path2 = get_path(goal2)
-#        for item in path:
-            #print(item)
-
-    else:
-        print("There's no path between the given nodes")
-    
-    map_2 = map.Map_Obj(task=2)
-    map_string2 = update_map_path(map_2,path2)
-    show_map1(map_string2)
     
         
     
