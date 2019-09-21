@@ -221,7 +221,18 @@ class Map_Obj():
         # Define what colors to give to different values of the string map (undefined values will remain yellow, this is
         # how the yellow path is painted)
         colors = {' # ': (255, 0, 0), ' . ': (215, 215, 215), ' , ': (166, 166, 166), ' : ': (96, 96, 96),
-                  ' ; ': (36, 36, 36), ' S ': (255, 0, 255), ' G ': (0, 128, 255)}
+                  ' ; ': (36, 36, 36), ' S ': (255, 0, 255), ' G ': (0, 128, 255), ' Y ':(255,255,0)}
+        
+        #(255,0,0) - red
+        #(215,215,215) - light grey
+        #(166,166,166) - grey
+        #(96,96,96) - dark grey
+        #(36,36,36) - black
+        #(255,0,255) - purple
+        #(0,128,255) - blue
+        #(255,255,0) - yellow
+        
+        
         # Go through image and set pixel color for every position
         for y in range(height):
             for x in range(width):
