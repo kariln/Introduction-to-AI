@@ -244,6 +244,7 @@ def get_path(end_node):
     return path[::-1] # Return reversed path
 
 def update_map_path(map_obj, path):
+    """adds the path to the map_obj. returns the string version of the map, with the path marked as ' Y '"""
     map_string = map_obj.get_maps()[1]
     start = tuple(map_obj.get_start_pos())
     end = tuple(map_obj.get_goal_pos())
@@ -360,35 +361,60 @@ def main():
 #    map_string2 = update_map_path(map_2,path2)
 #    show_map1(map_string2)
 #    
-    #initialization - task 2 - part 2
-    map_obj3 = map.Map_Obj(task=3)
-    map_int3 = map_obj3.get_maps()[0]
+#    #initialization - task 3 - part 2
+#    map_obj3 = map.Map_Obj(task=3)
+#    map_int3 = map_obj3.get_maps()[0]
+#    
+#    #updates map_string to not contain any space and updates the cost of the nodes
+#    #nodes-list has all the nodes in the  map
+#    nodes3, start_node3, end_node3 = create_nodes(map_obj3)
+#    start3 = map_obj3.get_start_pos()
+#    end3 = map_obj3.get_goal_pos()
+#    
+#    #script task 3 - part 2
+#    if a_star(map_int3, start3, end3, nodes3)[0] == True:
+#        print("Path found")
+#        print("Start-node:", start3)
+#        print("End-node:", end3)
+#        
+#        goal3 = a_star(map_int3, start3, end3, nodes3)[1]
+#        path3 = get_path(goal3)
+##        for item in path:
+#            #print(item)
+#
+#    else:
+#        print("There's no path between the given nodes")
+#    
+#    map_3 = map.Map_Obj(task=3)
+#    map_string3 = update_map_path(map_3,path3)
+#    show_map1(map_string3)
+    
+    #initialization - task 4 - part 2
+    map_obj4 = map.Map_Obj(task=4)
+    map_int4 = map_obj4.get_maps()[0]
     
     #updates map_string to not contain any space and updates the cost of the nodes
     #nodes-list has all the nodes in the  map
-    nodes3, start_node3, end_node3 = create_nodes(map_obj)
-    start3 = map_obj3.get_start_pos()
-    end3 = map_obj3.get_goal_pos()
+    nodes4, start_node4, end_node4 = create_nodes(map_obj4)
+    start4 = map_obj4.get_start_pos()
+    end4 = map_obj4.get_goal_pos()
     
     #script task 1 - part 1
-    if a_star(map_int3, start3, end3, nodes3)[0] == True:
+    if a_star(map_int4, start4, end4, nodes4)[0] == True:
         print("Path found")
-        print("Start-node:", start3)
-        print("End-node:", end3)
+        print("Start-node:", start4)
+        print("End-node:", end4)
         
-        goal3 = a_star(map_int3, start3, end3, nodes3)[1]
-        path3 = get_path(goal3)
+        goal4 = a_star(map_int4, start4, end4, nodes4)[1]
+        path4 = get_path(goal4)
 #        for item in path:
             #print(item)
 
     else:
         print("There's no path between the given nodes")
     
-    map_3 = map.Map_Obj(task=3)
-    map_string3 = update_map_path(map_3,path3)
-    show_map1(map_string3)
-    
-    
-        
+    map_4 = map.Map_Obj(task=4)
+    map_string4 = update_map_path(map_4,path4)
+    show_map1(map_string4)
     
 main()

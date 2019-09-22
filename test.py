@@ -23,6 +23,7 @@ clear()
 
 import map
 import math as m
+from PIL import Image
 
 
 class Node():
@@ -53,9 +54,11 @@ class Node():
     	:return: g(node) + h(node)"""
     	return self.g + self.h
     
-def a_star(map_int, start, end, nodes):
+def a_star(map_obj, start, end, nodes):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
     # Create start and end node
+    map_int = map_obj.get_maps()[0]
+    
     end_node = Node(None,tuple(end))
     end_node.h = 0
     end_node.cost = 1    
@@ -78,7 +81,6 @@ def a_star(map_int, start, end, nodes):
     # Loop until you find the end
     #while len(open_list) > 0:
     while True:
-        
         #failure occurs if there are no more nodes in the open_list
         if not open_list:
             return False, None  
@@ -135,13 +137,15 @@ def a_star(map_int, start, end, nodes):
                 attach_and_eval(child, current_node, end_node)
                 if child in closed_list:
                     propagate_path_improvements(child)
+        end_node = map.tick(map_obj)
 
 def attach_and_eval(child, parent, end_node):
     """updates information in relationship between child and parent"""
     child.parent = parent
+    
      # Create the g and h values
     child.g = parent.g + child.cost
-    child.h = euclidian_distance(child, end_node)       
+    child.h = manhattan_distance(child, end_node)       
             
 def map_shape(map_int):
     """shape will return a tuple (m, n), where m is the number of rows, and n is the number 
@@ -178,6 +182,24 @@ def create_nodes(map_obj):
                 wall_node.position = tuple(node_position)
                 wall_node.cost = float('inf')
                 nodes.append(wall_node)
+                
+            elif node == 2:
+                stair_node = Node(node_position)
+                stair_node.position = tuple(node_position)
+                wall_node.cost = 2
+                nodes.append(stair_node)
+                
+            elif node == 3:
+                packed_stair_node = Node(node_position)
+                packed_stair_node.position = tuple(node_position)
+                packed_stair_node.cost = 3
+                nodes.append(packed_stair_node)
+                
+            elif node == 4:
+                packed_room_node = Node(node_position)
+                packed_room_node.position = tuple(node_position)
+                packed_room_node.cost = 4
+                nodes.append(packed_room_node)
                 
             else: #found regular node
                 search_node = Node(node_position)
@@ -224,33 +246,95 @@ def get_path(end_node):
         
     return path[::-1] # Return reversed path
 
+def update_map_path(map_obj, path):
+    """adds the path to the map_obj. returns the string version of the map, with the path marked as ' Y '"""
+    map_string = map_obj.get_maps()[1]
+    start = tuple(map_obj.get_start_pos())
+    end = tuple(map_obj.get_goal_pos())
+
+    #finds the number of rows and columns in my map of nodes
+    rows = map_shape(map_string)[0]
+    columns = map_shape(map_string)[1]
+    
+    for x_cord in range(columns):
+        for y_cord in range(rows):
+            node_position = tuple([y_cord, x_cord])
+            
+            for item in path:
+                if item.position == node_position and item.position != start and item.position != end:
+                    map_string[y_cord][x_cord] = ' Y '
+    return map_string
+
+def show_map1(map_string):
+    """
+    A function used to draw the map as an image and show it.
+    :param map: map to use
+    :return: nothing."""
+
+    # Define width and height of image
+    width = map_shape(map_string)[1]
+    height = map_shape(map_string)[0]
+    # Define scale of the image
+    scale = 20
+    # Create an all-yellow image
+    image = Image.new('RGB', (width * scale, height * scale), (255, 255, 0))
+    # Load image
+    pixels = image.load()
+
+    # Define what colors to give to different values of the string map (undefined values will remain yellow, this is
+    # how the yellow path is painted)
+    colors = {' # ': (255, 0, 0), ' . ': (215, 215, 215), ' , ': (166, 166, 166), ' : ': (96, 96, 96),
+              ' ; ': (36, 36, 36), ' S ': (255, 0, 255), ' G ': (0, 128, 255), ' Y ':(255,255,0)}
+    
+    #(255,0,0) - red
+    #(215,215,215) - light grey
+    #(166,166,166) - grey
+    #(96,96,96) - dark grey
+    #(36,36,36) - black
+    #(255,0,255) - purple
+    #(0,128,255) - blue
+    #(255,255,0) - yellow
+    
+    # Go through image and set pixel color for every position
+    for y in range(height):
+        for x in range(width):
+            if map_string[y][x] not in colors: continue
+            for i in range(scale):
+                for j in range(scale):
+                    pixels[x * scale + i, y * scale + j] = colors[map_string[y][x]]
+    # Show image
+    image.show()
+
 def main():
     
-    #creates the map
-    map_obj = map.Map_Obj(task=1)
-    #map_string = generate_map(1)
-    map_int = map_obj.get_maps()[0]
-    #print(map_int)
+    #task 5 - part 3
+    
+    #initialization - task 4 - part 2
+    map_obj4 = map.Map_Obj(task=5)
+    map_int4 = map_obj4.get_maps()[0]
     
     #updates map_string to not contain any space and updates the cost of the nodes
     #nodes-list has all the nodes in the  map
-    nodes, start_node, end_node = create_nodes(map_obj)
-    start = map_obj.get_start_pos()
-    end = map_obj.get_goal_pos()
-   
-    #script
-    if a_star(map_int, start, end, nodes)[0] == True:
+    nodes4, start_node4, end_node4 = create_nodes(map_obj4)
+    start4 = map_obj4.get_start_pos()
+    end4 = map_obj4.get_goal_pos()
+    
+    #script task 1 - part 1
+    if a_star(map_obj4, start4, end4, nodes4)[0] == True:
         print("Path found")
-        print("Start-node:", start)
-        print("End-node:", end)
+        print("Start-node:", start4)
+        print("End-node:", end4)
         
-        goal = a_star(map_int, start, end, nodes)[1]
-        path = get_path(goal)
-        for item in path:
-            print(item)
+        goal4 = a_star(map_int4, start4, end4, nodes4)[1]
+        path4 = get_path(goal4)
+#        for item in path:
+            #print(item)
 
     else:
         print("There's no path between the given nodes")
-        
+    
+    map_4 = map.Map_Obj(task=5)
+    map_string4 = update_map_path(map_4,path4)
+    show_map1(map_string4)
     
 main()
