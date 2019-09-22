@@ -68,9 +68,9 @@ def a_star(map_int, start, end, nodes):
             
 
     # Initialize both open and closed list
-    #visited nodes
+    #generated nodes, not visited 
     open_list = []
-    #generated nodes, not visited
+    #visited nodes
     closed_list = []
 
     # Add the start node
@@ -108,11 +108,11 @@ def a_star(map_int, start, end, nodes):
 
             new_node = Node(current_node, node_position)
             
+
+            
             for node in nodes:
                 if node_position == node.position:
                     new_node.cost = node.cost
-                    new_node.g = node.g
-                    new_node.h = node.h
                     continue
 
             # Append
@@ -129,7 +129,8 @@ def a_star(map_int, start, end, nodes):
                 #adds the child to the open list
                 open_list.append(child)
                 #sorts the open_list so that the node with the lowest estimated cost is in pos=0
-                open_list.sort(key=lambda x: x.f())  
+                open_list.sort(key=lambda x: x.f())
+                
 
             elif current_node.g + child.cost < child.g:  #true if there exists a cheaper path to s
                 attach_and_eval(child, current_node, end_node)
@@ -163,7 +164,7 @@ def create_nodes(map_obj):
     columns = map_shape(map_int)[1]
     
     #initializing the nodes list
-    nodes = []
+    nodes = [] #all the nodes in the map
     start_node = []
     end_node = []
 
@@ -171,7 +172,6 @@ def create_nodes(map_obj):
         for y_cord in range(rows):
             node_position = [y_cord, x_cord]
             node = map_int[y_cord][x_cord]
-            map_int[y_cord][x_cord] = node #strip takes away redundant space
             
             
             if node == -1: #found wall-node
@@ -202,6 +202,7 @@ def create_nodes(map_obj):
                 search_node = Node(node_position)
                 search_node.position = tuple(node_position)
                 search_node.cost = 1
+                nodes.append(search_node)
                 if search_node.position == start:
                     search_node.cost = 0
                     start_node.append(search_node)
@@ -303,45 +304,45 @@ def show_map1(map_string):
     image.show()
 
 def main():
-#    
-#    #initialization - task 1 -part 1
-#    map_obj = map.Map_Obj(task=1)
-#    map_int = map_obj.get_maps()[0]
-#
-#    
-#    #updates map_string to not contain any space and updates the cost of the nodes
-#    #nodes-list has all the nodes in the  map
-#    nodes, start_node, end_node = create_nodes(map_obj)
-#    start = map_obj.get_start_pos()
-#    end = map_obj.get_goal_pos()
-#   
-#    #script task 1 - part 1
-#    if a_star(map_int, start, end, nodes)[0] == True:
-#        print("Path found")
-#        print("Start-node:", start)
-#        print("End-node:", end)
-#        
-#        goal = a_star(map_int, start, end, nodes)[1]
-#        path = get_path(goal)
-##        for item in path:
-#            #print(item)
-#
-#    else:
-#        print("There's no path between the given nodes")
-#    
-#    map_1 = map.Map_Obj(task=1)
-#    map_string = update_map_path(map_1,path)
-#    show_map1(map_string)
-#
-#    #initialization - task 2 - part 1
-#    map_obj2 = map.Map_Obj(task=2)
-#    map_int2 = map_obj.get_maps()[0]
-#
-#    #updates map_string to not contain any space and updates the cost of the nodes
-#    #nodes-list has all the nodes in the  map
-#    nodes2, start_node2, end_node2 = create_nodes(map_obj)
-#    start2 = map_obj2.get_start_pos()
-#    end2 = map_obj2.get_goal_pos()
+    
+    #initialization - task 1 -part 1
+    map_obj = map.Map_Obj(task=1)
+    map_int = map_obj.get_maps()[0]
+
+    
+    #updates map_string to not contain any space and updates the cost of the nodes
+    #nodes-list has all the nodes in the  map
+    nodes, start_node, end_node = create_nodes(map_obj)
+    start = map_obj.get_start_pos()
+    end = map_obj.get_goal_pos()
+   
+    #script task 1 - part 1
+    if a_star(map_int, start, end, nodes)[0] == True:
+        print("Path found")
+        print("Start-node:", start)
+        print("End-node:", end)
+        
+        goal = a_star(map_int, start, end, nodes)[1]
+        path = get_path(goal)
+        for item in path:
+            print(item)
+
+    else:
+        print("There's no path between the given nodes")
+    
+    map_1 = map.Map_Obj(task=1)
+    map_string = update_map_path(map_1,path)
+    show_map1(map_string)
+
+    #initialization - task 2 - part 1
+    map_obj2 = map.Map_Obj(task=2)
+    map_int2 = map_obj.get_maps()[0]
+
+    #updates map_string to not contain any space and updates the cost of the nodes
+    #nodes-list has all the nodes in the  map
+    nodes2, start_node2, end_node2 = create_nodes(map_obj)
+    start2 = map_obj2.get_start_pos()
+    end2 = map_obj2.get_goal_pos()
 #    
 #    #script task 2 - part 1
 #    if a_star(map_int2, start2, end2, nodes2)[0] == True:
@@ -388,33 +389,33 @@ def main():
 #    map_3 = map.Map_Obj(task=3)
 #    map_string3 = update_map_path(map_3,path3)
 #    show_map1(map_string3)
-    
-    #initialization - task 4 - part 2
-    map_obj4 = map.Map_Obj(task=4)
-    map_int4 = map_obj4.get_maps()[0]
-    
-    #updates map_string to not contain any space and updates the cost of the nodes
-    #nodes-list has all the nodes in the  map
-    nodes4, start_node4, end_node4 = create_nodes(map_obj4)
-    start4 = map_obj4.get_start_pos()
-    end4 = map_obj4.get_goal_pos()
-    
-    #script task 1 - part 1
-    if a_star(map_int4, start4, end4, nodes4)[0] == True:
-        print("Path found")
-        print("Start-node:", start4)
-        print("End-node:", end4)
-        
-        goal4 = a_star(map_int4, start4, end4, nodes4)[1]
-        path4 = get_path(goal4)
-#        for item in path:
-            #print(item)
-
-    else:
-        print("There's no path between the given nodes")
-    
-    map_4 = map.Map_Obj(task=4)
-    map_string4 = update_map_path(map_4,path4)
-    show_map1(map_string4)
+#    
+#    #initialization - task 4 - part 2
+#    map_obj4 = map.Map_Obj(task=4)
+#    map_int4 = map_obj4.get_maps()[0]
+#    
+#    #updates map_string to not contain any space and updates the cost of the nodes
+#    #nodes-list has all the nodes in the  map
+#    nodes4, start_node4, end_node4 = create_nodes(map_obj4)
+#    start4 = map_obj4.get_start_pos()
+#    end4 = map_obj4.get_goal_pos()
+#    
+#    #script task 1 - part 1
+#    if a_star(map_int4, start4, end4, nodes4)[0] == True:
+#        print("Path found")
+#        print("Start-node:", start4)
+#        print("End-node:", end4)
+#        
+#        goal4 = a_star(map_int4, start4, end4, nodes4)[1]
+#        path4 = get_path(goal4)
+##        for item in path:
+#            #print(item)
+#
+#    else:
+#        print("There's no path between the given nodes")
+#    
+#    map_4 = map.Map_Obj(task=4)
+#    map_string4 = update_map_path(map_4,path4)
+#    show_map1(map_string4)
     
 main()

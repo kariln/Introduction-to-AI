@@ -5,8 +5,6 @@ import time
 from PIL import Image
 import csv
 
-from temp import astar #importerer A*
-
 class Map_Obj():
     def __init__(self, task=1):
         self.start_pos, self.goal_pos, self.end_goal_pos, self.path_to_map = self.fill_critical_positions(task)
