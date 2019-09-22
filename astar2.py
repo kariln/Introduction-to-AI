@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Sep 20 14:30:13 2019
-
-@author: Kari Ness
-"""
 
 # -*- coding: utf-8 -*-
 """
@@ -390,32 +384,32 @@ def main():
 #    map_string3 = update_map_path(map_3,path3)
 #    show_map1(map_string3)
 #    
-#    #initialization - task 4 - part 2
-#    map_obj4 = map.Map_Obj(task=4)
-#    map_int4 = map_obj4.get_maps()[0]
+    #initialization - task 4 - part 2
+    map_obj4 = map.Map_Obj(task=4)
+    map_int4 = map_obj4.get_maps()[0]
+    
+    #updates map_string to not contain any space and updates the cost of the nodes
+    #nodes-list has all the nodes in the  map
+    nodes4, start_node4, end_node4 = create_nodes(map_obj4)
+    start4 = map_obj4.get_start_pos()
+    end4 = map_obj4.get_goal_pos()
 #    
-#    #updates map_string to not contain any space and updates the cost of the nodes
-#    #nodes-list has all the nodes in the  map
-#    nodes4, start_node4, end_node4 = create_nodes(map_obj4)
-#    start4 = map_obj4.get_start_pos()
-#    end4 = map_obj4.get_goal_pos()
-#    
-#    #script task 1 - part 1
-#    if a_star(map_int4, start4, end4, nodes4)[0] == True:
-#        print("Path found")
-#        print("Start-node:", start4)
-#        print("End-node:", end4)
-#        
-#        goal4 = a_star(map_int4, start4, end4, nodes4)[1]
-#        path4 = get_path(goal4)
-##        for item in path:
-#            #print(item)
-#
-#    else:
-#        print("There's no path between the given nodes")
-#    
-#    map_4 = map.Map_Obj(task=4)
-#    map_string4 = update_map_path(map_4,path4)
-#    show_map1(map_string4)
+    #script task 4 - part 1
+    if a_star(map_int4, start4, end4, nodes4)[0] == True:
+        print("Path found")
+        print("Start-node:", start4)
+        print("End-node:", end4)
+        
+        goal4 = a_star(map_int4, start4, end4, nodes4)[1]
+        path4 = get_path(goal4)
+#        for item in path:
+            #print(item)
+
+    else:
+        print("There's no path between the given nodes")
+    
+    map_4 = map.Map_Obj(task=4)
+    map_string4 = update_map_path(map_4,path4)
+    show_map1(map_string4)
     
 main()
