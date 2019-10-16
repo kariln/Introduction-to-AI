@@ -205,7 +205,88 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
           Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #a and b are the alpha-beta pruning variables
+        #a- the value of the best choice we have found so far at the choice point along the path for max
+        #b - the value of the best choice we have found so far at the choice point along the path for min
+        def minValue(gameState, depth, agentCounter,a,b):
+            minimum = ["", float("inf")]
+            
+            #pos_actions is a list of legal actions for the agent agentCounter in the state gameState
+            pos_actions = gameState.getLegalActions(agentCounter)
+            
+            if not pos_actions:
+                return self.evaluationFunction(gameState)
+            
+            for action in pos_actions:
+                #returns the gameState curr_state after the agent agentCounter takes an action 
+                curr_state = gameState.generateSuccessor(agentCounter, action)
+                
+                #returns the value for the next agent, due to the action
+                current = minOrMax(curr_state, depth, agentCounter + 1,a,b)
+                
+                #gets the value of the next agent
+                if type(current) is not list:
+                    newValue = current
+                else:
+                    newValue = current[1]
+
+                if newValue < minimum[1]:
+                    minimum = [action, newValue]
+                    
+                if newValue < a: 
+                    return [action, newValue]
+                #updates the b-value
+                b = min(b,newValue)
+            return minimum
+
+        def maxValue(gameState, depth, agentCounter, a, b):
+            maximum = ["", -float("inf")]
+            #pos_actions is a list of legal actions for the agent agentCounter in the state gameState
+            pos_actions = gameState.getLegalActions(agentCounter)
+
+            if not pos_actions:
+                return self.evaluationFunction(gameState)
+
+            for action in pos_actions:
+                #returns the gameState curr_state after the agent agentCounter takes an action 
+                curr_State = gameState.generateSuccessor(agentCounter, action)
+                
+                #returns the value for the next agent, due to the action
+                current = minOrMax(curr_State, depth, agentCounter + 1,a,b)
+                
+                #gets the value of the next agent
+                if type(current) is not list:
+                    newValue = current
+                else:
+                    newValue = current[1]
+                    
+                if newValue > maximum[1]:
+                    maximum = [action, newValue]
+                if newValue > b:
+                    return [action, newValue]
+                #updates the a-value
+                a = max(a,newValue)
+            return maximum
+
+        def minOrMax(gameState, depth, agentCounter, a, b):
+            #if agentCounter is bigger than the number of agents in the current gameState,
+            #increase the depth with one(adds one agent) and start on agentCounter 0 (pacman)
+            if agentCounter >= gameState.getNumAgents():
+                depth += 1
+                agentCounter = 0
+
+            if (depth == self.depth or gameState.isWin() or gameState.isLose()):
+                return self.evaluationFunction(gameState)
+            #if one has reached the final layer in the action tree or the game is won/lost
+            #-> evaluate
+            
+            elif (agentCounter == 0):
+                return maxValue(gameState, depth, agentCounter,a,b)
+            else:
+                return minValue(gameState, depth, agentCounter,a,b)
+
+        actionsList = minOrMax(gameState, 0, 0,-float("inf"),float("inf"))
+        return actionsList[0]
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
