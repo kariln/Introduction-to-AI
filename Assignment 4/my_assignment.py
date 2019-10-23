@@ -109,12 +109,22 @@ class CSP:
         iterations of the loop.
         """
         # TODO: IMPLEMENT THIS
+        #iterates through the values in assignment.
+        #values are a list of the possible values of the variable.
+        #if there are no variables left which haven't gotten an value assigned -> return assignment
         number = 0
         for values in assignment.values():
             if len(values) != 1:
                 number += 1
         if number == 0:
             return assignment
+        
+        #selects one variable which haven't gotten a variable assigned
+        var = self.select_unassigned_variable(assignment)
+        
+        #ORDER-DOMAIN-VALUEE(var,assignment,csp) -> in what order should its values be tried?
+        
+        for 
             
 
     def select_unassigned_variable(self, assignment):
