@@ -26,19 +26,14 @@ class CSP:
         """Get a list of all possible pairs (as tuples) of the values in
         the lists 'a' and 'b', where the first component comes from list
         'a' and the second component comes from list 'b'.
-        
         """
-        #returns a list of all the possible pairs
         return itertools.product(a, b)
 
     def get_all_arcs(self):
         """Get a list of all arcs/constraints that have been defined in
         the CSP. The arcs/constraints are represented as tuples (i, j),
         indicating a constraint between variable 'i' and 'j'.
-        
         """
-        
-        #returns all the constraints between the two variables i and j
         return [(i, j) for i in self.constraints for j in self.constraints[i]]
 
     def get_all_neighboring_arcs(self, var):
@@ -56,7 +51,6 @@ class CSP:
         to add the constraint the other way, j -> i, as all constraints
         are supposed to be two-way connections!
         """
-        #?
         if not j in self.constraints[i]:
             # First, get a list of all possible pairs of values between variables i and j
             self.constraints[i][j] = self.get_all_possible_pairs(self.domains[i], self.domains[j])
@@ -93,17 +87,20 @@ class CSP:
     def backtrack(self, assignment):
         """The function 'Backtrack' from the pseudocode in the
         textbook.
+
         The function is called recursively, with a partial assignment of
         values 'assignment'. 'assignment' is a dictionary that contains
         a list of all legal values for the variables that have *not* yet
         been decided, and a list of only a single value for the
         variables that *have* been decided.
+
         When all of the variables in 'assignment' have lists of length
         one, i.e. when all variables have been assigned a value, the
         function should return 'assignment'. Otherwise, the search
         should continue. When the function 'inference' is called to run
         the AC-3 algorithm, the lists of legal values in 'assignment'
         should get reduced as AC-3 discovers illegal values.
+
         IMPORTANT: For every iteration of the for-loop in the
         pseudocode, you need to make a deep copy of 'assignment' into a
         new variable before changing it. Every iteration of the for-loop
@@ -111,24 +108,14 @@ class CSP:
         assignments and inferences that took place in previous
         iterations of the loop.
         """
-        
-        
-        if all(lengths is 1 for lengths in [len(values) for values in assignment.values()]):
+        # TODO: IMPLEMENT THIS
+        number = 0
+        for values in assignment.values():
+            if len(values) != 1:
+                number += 1
+        if number == 0:
             return assignment
-        var = self.select_unassigned_variable(assignment)
-
-        for value in assignment[var]: #Add a sorting function here
-            temp_assignment = copy.deepcopy(assignment)
-            if value in temp_assignment[var]:
-                temp_assignment[var] = [value]
-                if self.inference(temp_assignment, self.get_all_neighboring_arcs(var)):
-                    result = self.backtrack(temp_assignment)
-                    if result != None:
-                        print('Found a solution')
-                        return result
-
-        print('Could not find a solution')
-        return None
+            
 
     def select_unassigned_variable(self, assignment):
         """The function 'Select-Unassigned-Variable' from the pseudocode
@@ -136,18 +123,8 @@ class CSP:
         in 'assignment' that have not yet been decided, i.e. whose list
         of legal values has a length greater than one.
         """
-        sorted_keys = []
-        for k in sorted(assignment, key=lambda k: len(assignment[k])):
-            sorted_keys.append((k, len(assignment[k])))
-
-        list_of_duplicates = [item for item in sorted_keys if sorted_keys[0][1] in item]
-
-        if len(list_of_duplicates) > 1:
-            y = sorted([(var,len(self.constraints[var])) for var in self.constraints], key=lambda k: k[1], reverse=True)
-            var = y[0][0]
-        else:
-            var = sorted_keys[0][0]
-        return var
+        # TODO: IMPLEMENT THIS
+        pass
 
     def inference(self, assignment, queue):
         """The function 'AC-3' from the pseudocode in the textbook.
@@ -155,25 +132,8 @@ class CSP:
         the lists of legal values for each undecided variable. 'queue'
         is the initial queue of arcs that should be visited.
         """
-
-        while len(queue):
-            (i,j) = queue.pop()
-            if self.revise(assignment, i, j):
-                if len(assignment[i]) == 0:
-                    return False
-                
-                neighbors =  self.get_all_neighboring_arcs(i)
-#                neighbors.remove((j,i))
-                if (i,j) in neighbors:
-                    neighbors.remove((i,j))
-                if (j,i) in neighbors:
-                    neighbors.remove((j,i))
-
-                for k in neighbors:
-                    queue.append(k)
-                
-    
-        return True
+        # TODO: IMPLEMENT THIS
+        pass
 
     def revise(self, assignment, i, j):
         """The function 'Revise' from the pseudocode in the textbook.
@@ -184,19 +144,9 @@ class CSP:
         between i and j, the value should be deleted from i's list of
         legal values in 'assignment'.
         """
-        revised = False
-        toBeRemoved = []
-        for value_i in assignment[i]:
-            satisfies_constraint = False
-            for value_j in assignment[j]:
-                if (value_i, value_j) in self.constraints[i][j]:
-                    satisfies_constraint = True
-            if not satisfies_constraint:
-                toBeRemoved.append(value_i)
-                revised = True
-        for value in toBeRemoved:
-            assignment[i].remove(value)
-        return revised
+        # TODO: IMPLEMENT THIS
+        pass
+
 
 def create_map_coloring_csp():
     """Instantiate a CSP representing the map coloring problem from the
@@ -265,28 +215,3 @@ def print_sudoku_solution(solution):
         print("")
         if row == 2 or row == 5:
             print('------+-------+------')
-
-def main():
-    #trenger hjelp til å hente inn filer
-    csp_easy = create_sudoku_csp('easy.txt')
-    csp_medium = create_sudoku_csp('medium.txt')
-    csp_hard = create_sudoku_csp('hard.txt')
-    csp_veryhard = create_sudoku_csp('veryhard.txt')
-    
-    #easy board
-    solution = csp_medium.backtracking_search()
-    print_sudoku_solution(solution)
-    
-    #medium board
-    solution = csp_easy.backtracking_search()
-    print_sudoku_solution(solution)
-    
-    #hard board
-    solution = csp_hard.backtracking_search()
-    print_sudoku_solution(solution)
-    
-    #very hard board
-    solution = csp_veryhard.backtracking_search()
-    print_sudoku_solution(solution)
-
-main()
