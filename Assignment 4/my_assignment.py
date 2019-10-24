@@ -1,5 +1,6 @@
 import copy
 import itertools
+import json
 
 
 class CSP:
@@ -123,8 +124,15 @@ class CSP:
         var = self.select_unassigned_variable(assignment)
         
         #ORDER-DOMAIN-VALUEE(var,assignment,csp) -> in what order should its values be tried?
-        
-        for 
+        for value in assignment[var]:
+            temp_assignment = copy.deepcopy(assignment)
+            if value in temp_assignment[var]:
+                temp_assignment[var] = [value]
+                if self.inference(temp_assignment, self.get_all_neighboring_arcs(var)):
+                    result = self.backtrack(temp_assignment)
+                    if result != None:
+                        return result
+        return None
             
 
     def select_unassigned_variable(self, assignment):
@@ -134,7 +142,14 @@ class CSP:
         of legal values has a length greater than one.
         """
         # TODO: IMPLEMENT THIS
-        pass
+        
+        #sorts the variables to find the variable with the minimum-remaining-values
+        #er dette nok?
+        for variable, values in assignment.items():
+            if len(values) > 1:
+                return variable
+        return None
+        
 
     def inference(self, assignment, queue):
         """The function 'AC-3' from the pseudocode in the textbook.
@@ -143,7 +158,31 @@ class CSP:
         is the initial queue of arcs that should be visited.
         """
         # TODO: IMPLEMENT THIS
-        pass
+        #inference uses the constraints to reduce the legal values for a variable.
+        #in this case we reduce the possible values for each variable, or node in the sudoku board
+        while len(queue) != 0:
+            #take out the arc that is going to be visited
+            (i,j) = queue.pop()
+            #check that the assignment is correct and revise if not
+            if self.revise(assignment,i,j):
+                
+                if len(assignment[i]) == 0:
+                    return False
+                
+                #gets all the neighboring arcs
+                neighbors = self.get_all_neighboring_arcs(i)
+                
+                if (i,j) in neighbors:
+                    neighbors.remove((i,j))
+                    
+                if (j,i) in neighbors:
+                    neighbors.remove((j,i))
+                    
+                #adds the neighbors to the queue of arcs that should be visited
+                for neighbor in neighbors:
+                    queue.append(neighbor)
+        return True
+                
 
     def revise(self, assignment, i, j):
         """The function 'Revise' from the pseudocode in the textbook.
@@ -155,7 +194,21 @@ class CSP:
         legal values in 'assignment'.
         """
         # TODO: IMPLEMENT THIS
-        pass
+        revised = False
+        toBeRemoved = []
+
+        for value_i in assignment[i]:
+            satisfies_constraint = False
+            for value_j in assignment[j]:
+                if (value_i, value_j) in self.constraints[i][j]:
+                    satisfies_constraint = True
+            if not satisfies_constraint:
+                toBeRemoved.append(value_i)
+                revised = True
+        for value in toBeRemoved:
+            assignment[i].remove(value)
+        
+        return revised
 
 
 def create_map_coloring_csp():
@@ -225,3 +278,33 @@ def print_sudoku_solution(solution):
         print("")
         if row == 2 or row == 5:
             print('------+-------+------')
+            
+            
+def main():
+    #trenger hjelp til å hente inn filer
+    csp_easy = create_sudoku_csp('boards/easy.txt')
+    csp_medium = create_sudoku_csp('boards/medium.txt')
+    csp_hard = create_sudoku_csp('boards/hard.txt')
+    csp_veryhard = create_sudoku_csp('boards/veryhard.txt')
+    
+    #easy board
+    solution = csp_medium.backtracking_search()
+    print("easy")
+    print_sudoku_solution(solution)
+    
+    #medium board
+    solution = csp_easy.backtracking_search()
+    print("medium")
+    print_sudoku_solution(solution)
+    
+    #hard board
+    solution = csp_hard.backtracking_search()
+    print("hard")
+    print_sudoku_solution(solution)
+    
+    #very hard board
+    solution = csp_veryhard.backtracking_search()
+    print("very hard")
+    print_sudoku_solution(solution)
+
+main()
