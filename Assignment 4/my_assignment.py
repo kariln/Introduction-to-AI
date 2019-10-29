@@ -113,6 +113,8 @@ class CSP:
         #iterates through the values in assignment.
         #values are a list of the possible values of the variable.
         #if there are no variables left which haven't gotten an value assigned -> return assignment
+        
+        print("call")
         number = 0
         for values in assignment.values():
             if len(values) != 1:
@@ -131,7 +133,10 @@ class CSP:
                 if self.inference(temp_assignment, self.get_all_neighboring_arcs(var)):
                     result = self.backtrack(temp_assignment)
                     if result != None:
+                        
                         return result
+        
+        print("failure")
         return None
             
 
@@ -286,7 +291,7 @@ def main():
     csp_medium = create_sudoku_csp('boards/medium.txt')
     csp_hard = create_sudoku_csp('boards/hard.txt')
     csp_veryhard = create_sudoku_csp('boards/veryhard.txt')
-    
+
     #easy board
     solution = csp_medium.backtracking_search()
     print("easy")
@@ -301,10 +306,11 @@ def main():
     solution = csp_hard.backtracking_search()
     print("hard")
     print_sudoku_solution(solution)
-    
+
     #very hard board
     solution = csp_veryhard.backtracking_search()
     print("very hard")
     print_sudoku_solution(solution)
+    
 
 main()
